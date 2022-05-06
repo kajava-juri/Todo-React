@@ -12,7 +12,7 @@ function App() {
   return(
     <div className="TodoApp">
 
-      {user ? <ListView/> : <LoginForm setUser={setUser} setToken={setToken}/>}
+      {user ? <ListView token={token}/> : <LoginForm setUser={setUser} setToken={setToken}/>}
 
     </div>
   );

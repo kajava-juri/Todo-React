@@ -1,50 +1,65 @@
 import { useState } from 'react';
+import React, { useEffect } from 'react';
 
 export function ListView({token}){
     let [taskName, setUserInput] = useState();
-    let [tasksArray, setTaskArray] = useState(["task1", "task2"]);
+    let [tasks, setTaskArray] = useState([]);
+
+    useEffect(() => {
+        fetchData();
+      }, []);
 
     function fetchData(){
         const Http = new XMLHttpRequest();
         const url='http://demo2.z-bit.ee/tasks';
         Http.open("GET", url);
         Http.setRequestHeader("Content-Type", "application/json");
-        Http.setRequestHeader("Authorization", token);
+        Http.setRequestHeader("Authorization", "Bearer " + token);
         Http.send();
         
         Http.onreadystatechange = function() {
             if(this.readyState === 4 && this.status===200){
-                console.log(JSON.parse(Http.responseText));
+                //console.log(JSON.parse(Http.responseText));
+                let newArray = JSON.parse(Http.responseText).slice();
+                setTaskArray(newArray);
+                //console.log(tasks);
             }
         }
     }
 
     function DeleteTask(index){
-        tasksArray.splice(index, 1);
-        let newTasks = tasksArray.slice();
-        setTaskArray(newTasks);
+        tasks.splice(index, 1);
+        let newTasks = tasks.slice();
+        //setTaskArray(newTasks);
     }
 
     function SaveTask(value){
-        console.log(tasksArray);
-        let newTasks = tasksArray.slice();
+        let newTasks = tasks.slice();
         newTasks.push(value);
-        setTaskArray(newTasks);
+        console.log(newTask);
+        //setTaskArray(newTasks);
     }
 
     return(
         <div>
+
             <input onChange={(event) => setUserInput(event.target.value)} type="text" required="required"/>
             <button onClick={() => {SaveTask(taskName)}}>Save</button>
 
             <br/>
-            
             <ul>
-                {tasksArray.map((task, index) => { 
-                        return (<li key={index}>{tasksArray[index]} <button onClick={() => {DeleteTask(index)}}>Delete</button></li>);
-                    }) 
-                }
-            </ul>
+                {tasks.map((task, index) => {
+                    return (
+                        <li key={task['id']}>
+                            <p>Id: {task['id']}</p>
+                            <p>Title: {task['title']}</p>
+                            <p>Description: {task['desc']}</p>
+                        </li>
+                        
+                        
+                    )
+                })}
+            </ul> 
         </div>
   )
 }
