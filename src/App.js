@@ -7,10 +7,12 @@ import {LoginForm} from "./LoginForm";
 function App() {
 
   const [user, setUser] = useState();
+  const [token, setToken]= useState();
+
   return(
     <div className="TodoApp">
 
-      {user ? <ListView/> : <LoginForm setUser={setUser}/>}
+      {user ? <ListView/> : <LoginForm setUser={setUser} setToken={setToken}/>}
 
     </div>
   );

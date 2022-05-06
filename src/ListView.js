@@ -1,8 +1,23 @@
 import { useState } from 'react';
 
-export function ListView(props){
+export function ListView({token}){
     let [taskName, setUserInput] = useState();
     let [tasksArray, setTaskArray] = useState(["task1", "task2"]);
+
+    function fetchData(){
+        const Http = new XMLHttpRequest();
+        const url='http://demo2.z-bit.ee/tasks';
+        Http.open("GET", url);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("Authorization", token);
+        Http.send();
+        
+        Http.onreadystatechange = function() {
+            if(this.readyState === 4 && this.status===200){
+                console.log(JSON.parse(Http.responseText));
+            }
+        }
+    }
 
     function DeleteTask(index){
         tasksArray.splice(index, 1);
