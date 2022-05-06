@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-export function TasksList(props){
+export function ListView(props){
     let [taskName, setUserInput] = useState();
-    let [tasksArray, setTaskArray] = useState([]);
+    let [tasksArray, setTaskArray] = useState(["task1", "task2"]);
 
     function DeleteTask(index){
         tasksArray.splice(index, 1);
