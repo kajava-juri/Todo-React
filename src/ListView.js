@@ -2,7 +2,13 @@ import { useState } from 'react';
 import React, { useEffect } from 'react';
 
 export function ListView({token}){
-    let [taskName, setUserInput] = useState();
+
+    const initialValues = {
+        title: "", 
+        desc: ""
+    };
+    let [createTaskValues, setNewTaskValues] = useState(initialValues);
+
     let [tasks, setTaskArray] = useState([]);
 
     useEffect(() => {
@@ -28,23 +34,48 @@ export function ListView({token}){
     }
 
     function DeleteTask(index){
-        tasks.splice(index, 1);
-        let newTasks = tasks.slice();
+        // tasks.splice(index, 1);
+        // let newTasks = tasks.slice();
         //setTaskArray(newTasks);
     }
 
-    function SaveTask(value){
-        let newTasks = tasks.slice();
-        newTasks.push(value);
-        console.log(newTask);
-        //setTaskArray(newTasks);
+    function SaveTask(e){
+
+        e.preventDefault();
+
+        const Http = new XMLHttpRequest();
+        const url='http://demo2.z-bit.ee/tasks';
+        Http.open("POST", url);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("Authorization", "Bearer " + token);
+        Http.send(JSON.stringify(createTaskValues));
+
+
     }
+
+    const handleInputChange = (e) => {
+        //const name = e.target.name 
+        //const value = e.target.value 
+        const { name, value } = e.target;
+    
+        setNewTaskValues({
+          ...createTaskValues,
+          [name]: value,
+        });
+    };
 
     return(
         <div>
+            <form onSubmit={SaveTask}>
+                <label htmlFor="title">Title</label>
+                <input name="title" value={createTaskValues.title} onChange={handleInputChange} type="text" required="required"/>
 
-            <input onChange={(event) => setUserInput(event.target.value)} type="text" required="required"/>
-            <button onClick={() => {SaveTask(taskName)}}>Save</button>
+                <label htmlFor="desc">Description</label>
+                <input name="desc" value={createTaskValues.desc} onChange={handleInputChange} type="text" required="required"/>
+
+                <input type="submit" value="Submit"></input>
+            </form>
+
 
             <br/>
             <ul>
