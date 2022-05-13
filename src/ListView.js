@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import React, { useEffect } from 'react';
+import './ListView.css';
 
 export function ListView({token}){
 
@@ -7,6 +8,7 @@ export function ListView({token}){
         title: "", 
         desc: ""
     };
+
     let [createTaskValues, setNewTaskValues] = useState(initialValues);
 
     let [tasks, setTaskArray] = useState([]);
@@ -25,18 +27,26 @@ export function ListView({token}){
         
         Http.onreadystatechange = function() {
             if(this.readyState === 4 && this.status===200){
-                //console.log(JSON.parse(Http.responseText));
                 let newArray = JSON.parse(Http.responseText).slice();
                 setTaskArray(newArray);
-                //console.log(tasks);
+                console.log(tasks);
             }
         }
     }
 
-    function DeleteTask(index){
-        // tasks.splice(index, 1);
+    function DeleteTask(id){
+        // tasks.splice(id, 1);
         // let newTasks = tasks.slice();
         //setTaskArray(newTasks);
+
+        
+        const Http = new XMLHttpRequest();
+        const url=`http://demo2.z-bit.ee/tasks/${id}`;
+        Http.open("DELETE", url);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("Authorization", "Bearer " + token);
+        Http.send();
+
     }
 
     function SaveTask(e){
@@ -46,6 +56,19 @@ export function ListView({token}){
         const Http = new XMLHttpRequest();
         const url='http://demo2.z-bit.ee/tasks';
         Http.open("POST", url);
+        Http.setRequestHeader("Content-Type", "application/json");
+        Http.setRequestHeader("Authorization", "Bearer " + token);
+        Http.send(JSON.stringify(createTaskValues));
+
+
+    }
+    function EditTask(e){
+
+        e.preventDefault();
+
+        const Http = new XMLHttpRequest();
+        const url='http://demo2.z-bit.ee/tasks';
+        Http.open("PUT", url);
         Http.setRequestHeader("Content-Type", "application/json");
         Http.setRequestHeader("Authorization", "Bearer " + token);
         Http.send(JSON.stringify(createTaskValues));
@@ -66,6 +89,17 @@ export function ListView({token}){
 
     return(
         <div>
+            <button id="myBtn">Open Modal</button>
+
+            <div id="myModal" class="modal">
+
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p>Some text in the Modal..</p>
+                </div>
+
+            </div>
+
             <form onSubmit={SaveTask}>
                 <label htmlFor="title">Title</label>
                 <input name="title" value={createTaskValues.title} onChange={handleInputChange} type="text" required="required"/>
@@ -85,12 +119,14 @@ export function ListView({token}){
                             <p>Id: {task['id']}</p>
                             <p>Title: {task['title']}</p>
                             <p>Description: {task['desc']}</p>
+                            <p>Done: {task['marked_as_done'] ? "true" : "false"}</p> 
+                            <button onClick={() => DeleteTask(task['id'])}>Delete</button>
+                            <button onClick={() => DeleteTask(task['id'])}>Edit</button>
                         </li>
-                        
-                        
                     )
                 })}
             </ul> 
         </div>
   )
 }
+
