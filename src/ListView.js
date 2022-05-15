@@ -91,10 +91,10 @@ export function ListView({token}){
         <div>
             <button id="myBtn">Open Modal</button>
 
-            <div id="myModal" class="modal">
+            <div id="myModal" className="modal">
 
-                <div class="modal-content">
-                    <span class="close">&times;</span>
+                <div className="modal-content">
+                    <span className="close">&times;</span>
                     <p>Some text in the Modal..</p>
                 </div>
 
@@ -113,7 +113,7 @@ export function ListView({token}){
 
             <br/>
             <ul>
-                {tasks.map((task, index) => {
+                {tasks.map((task) => {
                     return (
                         <li key={task['id']}>
                             <p>Id: {task['id']}</p>
@@ -121,7 +121,7 @@ export function ListView({token}){
                             <p>Description: {task['desc']}</p>
                             <p>Done: {task['marked_as_done'] ? "true" : "false"}</p> 
                             <button onClick={() => DeleteTask(task['id'])}>Delete</button>
-                            <button onClick={() => DeleteTask(task['id'])}>Edit</button>
+                            <button onClick={() => EditTask(task['id'])}>Edit</button>
                         </li>
                     )
                 })}

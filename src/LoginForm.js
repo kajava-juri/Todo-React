@@ -53,6 +53,8 @@ export function LoginForm({setUser, setToken}){
           ...loginValues,
           [name]: value,
         });
+
+        console.log(`Name: ${name}, value: ${value}`);
     };
 
    return(
@@ -81,10 +83,10 @@ export function LoginForm({setUser, setToken}){
             <form onSubmit={handlelogin}>
 
                 <label htmlFor="username">Username: </label>
-                <input type="text" name="username" value={loginValues.username} onChange={handleInputChange}/>
+                <input type="text" name="username"  onChange={handleInputChange}/>
 
                 <label htmlFor="password">Password: </label>
-                <input type="text" name="password" value={loginValues.password} onChange={handleInputChange}/>
+                <input type="text" name="password"  onChange={handleInputChange}/>
 
                 <input type="submit" value="Submit"></input>
                 
