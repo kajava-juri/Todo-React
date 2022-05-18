@@ -15,7 +15,7 @@ export function ListView({token}){
 
     useEffect(() => {
         fetchData();
-      }, []);
+      });
 
     function fetchData(){
         const Http = new XMLHttpRequest();
