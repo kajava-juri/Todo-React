@@ -1,21 +1,30 @@
 import { useState } from 'react';
 import React, { useEffect } from 'react';
 import './ListView.css';
+import Modal from './components/Modal';
 
 export function ListView({token}){
 
-    const initialValues = {
+    const [editModalOpen, setEditModalOpen] = useState(false);
+
+    const newTaskInitialValues = {
         title: "", 
         desc: ""
     };
+    const editTaskInitialValues ={
+        tite: "",
+        marked_as_done: false
+    };
 
-    let [createTaskValues, setNewTaskValues] = useState(initialValues);
-
+    let [createTaskValues, setNewTaskValues] = useState(newTaskInitialValues);
+    let [editTaskValues, setEditTaskValues] = useState(editTaskInitialValues);
     let [tasks, setTaskArray] = useState([]);
 
     useEffect(() => {
-        fetchData();
-      });
+        if (!editModalOpen){
+            fetchData();
+        }
+      }, [editModalOpen]);
 
     function fetchData(){
         const Http = new XMLHttpRequest();
@@ -29,7 +38,6 @@ export function ListView({token}){
             if(this.readyState === 4 && this.status===200){
                 let newArray = JSON.parse(Http.responseText).slice();
                 setTaskArray(newArray);
-                console.log(tasks);
             }
         }
     }
@@ -67,18 +75,21 @@ export function ListView({token}){
         e.preventDefault();
 
         const Http = new XMLHttpRequest();
-        const url='http://demo2.z-bit.ee/tasks';
+        const url=`http://demo2.z-bit.ee/tasks/${editTaskValues.id}`;
         Http.open("PUT", url);
         Http.setRequestHeader("Content-Type", "application/json");
         Http.setRequestHeader("Authorization", "Bearer " + token);
-        Http.send(JSON.stringify(createTaskValues));
+        Http.send(JSON.stringify(editTaskValues));
 
-
+        setEditModalOpen(false);
     }
 
-    const handleInputChange = (e) => {
-        //const name = e.target.name 
-        //const value = e.target.value 
+    function handleEditButton(task){
+        setEditModalOpen(true);
+        setEditTaskValues({...task})
+    }
+
+    const handleNewTaskInputChange = (e) => {
         const { name, value } = e.target;
     
         setNewTaskValues({
@@ -87,29 +98,42 @@ export function ListView({token}){
         });
     };
 
+    const handleEditTaskInputChange = (e) => {
+        const { name, value, checked, type } = e.target;
+
+    
+        setEditTaskValues({
+          ...editTaskValues,
+          [name]: type == "checkbox" ? checked : value,
+        });
+    };
+
+
     return(
         <div>
-            <button id="myBtn">Open Modal</button>
-
-            <div id="myModal" className="modal">
-
-                <div className="modal-content">
-                    <span className="close">&times;</span>
-                    <p>Some text in the Modal..</p>
-                </div>
-
-            </div>
-
             <form onSubmit={SaveTask}>
                 <label htmlFor="title">Title</label>
-                <input name="title" value={createTaskValues.title} onChange={handleInputChange} type="text" required="required"/>
+                <input name="title" value={createTaskValues.title} onChange={handleNewTaskInputChange} type="text" required="required"/>
 
                 <label htmlFor="desc">Description</label>
-                <input name="desc" value={createTaskValues.desc} onChange={handleInputChange} type="text" required="required"/>
+                <input name="desc" value={createTaskValues.desc} onChange={handleNewTaskInputChange} type="text" required="required"/>
 
                 <input type="submit" value="Submit"></input>
             </form>
 
+            <Modal open={editModalOpen} onClose={() => {setEditModalOpen(false)}}>
+                <form onSubmit={EditTask}>
+
+                    <label htmlFor="title">Title: </label>
+                    <input type="text" name="title" value={editTaskValues['title']} onChange={handleEditTaskInputChange}/>
+
+                    <label htmlFor="marked_as_done">Is done: </label>
+                    <input type="checkbox" name="marked_as_done" checked={editTaskValues['marked_as_done']}  onChange={handleEditTaskInputChange}/>
+
+                    <input type="submit" value="Submit"></input>
+
+                </form>
+            </Modal>
 
             <br/>
             <ul>
@@ -121,12 +145,15 @@ export function ListView({token}){
                             <p>Description: {task['desc']}</p>
                             <p>Done: {task['marked_as_done'] ? "true" : "false"}</p> 
                             <button onClick={() => DeleteTask(task['id'])}>Delete</button>
-                            <button onClick={() => EditTask(task['id'])}>Edit</button>
+                            <button onClick={() => handleEditButton(task)}>Edit</button>
                         </li>
                     )
                 })}
-            </ul> 
+            </ul>
+
         </div>
+
+        
   )
 }
 

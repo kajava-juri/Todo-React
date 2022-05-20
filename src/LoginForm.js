@@ -54,7 +54,6 @@ export function LoginForm({setUser, setToken}){
           [name]: value,
         });
 
-        console.log(`Name: ${name}, value: ${value}`);
     };
 
    return(
