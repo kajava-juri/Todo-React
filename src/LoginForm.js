@@ -1,5 +1,7 @@
 import './LoginForm.css';
 import { useState } from 'react';
+import useSWR from 'swr';
+
 
 export function LoginForm({setUser, setToken}){
 
@@ -56,6 +58,26 @@ export function LoginForm({setUser, setToken}){
 
     };
 
+    const login = {
+        username: "jyri.kajava@tptlive.ee", 
+        password: "duck123"
+    };
+
+
+    // const fetcher = (url) => fetch(url,
+    //     {
+    //         method: "POST",
+    //         headers: {"Content-Type": "application/json"},
+    //         body: JSON.stringify(login)
+    //     })
+    //     .then(res => res.json());
+    // var url = 'http://demo2.z-bit.ee/users/get-token';
+    // const { data, error } = useSWR(url, fetcher)
+
+    // if (error) console.log("failed to load");
+    // if (!data) console.log("loading...");
+    // console.log(data)
+
    return(
         <div>
             <h2>Create user</h2>
@@ -85,7 +107,7 @@ export function LoginForm({setUser, setToken}){
                 <input type="text" name="username"  onChange={handleInputChange}/>
 
                 <label htmlFor="password">Password: </label>
-                <input type="text" name="password"  onChange={handleInputChange}/>
+                <input type="password" name="password"  onChange={handleInputChange}/>
 
                 <input type="submit" value="Submit"></input>
                 

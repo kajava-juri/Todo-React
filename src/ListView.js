@@ -2,6 +2,9 @@ import { useState } from 'react';
 import React, { useEffect } from 'react';
 import './ListView.css';
 import Modal from './components/Modal';
+import useSWR from 'swr';
+import axios from "axios";
+
 
 export function ListView({token}){
 
@@ -25,6 +28,7 @@ export function ListView({token}){
             fetchData();
         }
       }, [editModalOpen]);
+
 
     function fetchData(){
         const Http = new XMLHttpRequest();
@@ -104,9 +108,22 @@ export function ListView({token}){
     
         setEditTaskValues({
           ...editTaskValues,
-          [name]: type == "checkbox" ? checked : value,
+          [name]: type === "checkbox" ? checked : value,
         });
     };
+
+
+
+    const fetcher = (url, token) =>fetch()
+        .get(url, { headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" } })
+        .then((res) => res.data);
+
+    var url = 'http://demo2.z-bit.ee/tasks';
+    const { data, error, mutate } = useSWR([url, token], fetcher)
+
+    if (error) console.log("failed to load");
+    if (!data) console.log("loading...");
+    console.log(data)
 
 
     return(
@@ -143,7 +160,7 @@ export function ListView({token}){
                             <p>Id: {task['id']}</p>
                             <p>Title: {task['title']}</p>
                             <p>Description: {task['desc']}</p>
-                            <p>Done: {task['marked_as_done'] ? "true" : "false"}</p> 
+                            <p>Done: {task['marked_as_done'] ? " true" : " false"}</p> 
                             <button onClick={() => DeleteTask(task['id'])}>Delete</button>
                             <button onClick={() => handleEditButton(task)}>Edit</button>
                         </li>
