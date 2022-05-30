@@ -37,7 +37,6 @@ export function ListView({token}){
         Http.setRequestHeader("Content-Type", "application/json");
         Http.setRequestHeader("Authorization", "Bearer " + token);
         Http.send();
-        
         Http.onreadystatechange = function() {
             if(this.readyState === 4 && this.status===200){
                 let newArray = JSON.parse(Http.responseText).slice();
@@ -58,7 +57,11 @@ export function ListView({token}){
         Http.setRequestHeader("Content-Type", "application/json");
         Http.setRequestHeader("Authorization", "Bearer " + token);
         Http.send();
-
+        Http.onreadystatechange = function() {
+            if(this.readyState === 4 && this.status===204){
+                fetchData();
+            }
+        }
     }
 
     function SaveTask(e){
@@ -71,8 +74,11 @@ export function ListView({token}){
         Http.setRequestHeader("Content-Type", "application/json");
         Http.setRequestHeader("Authorization", "Bearer " + token);
         Http.send(JSON.stringify(createTaskValues));
-
-
+        Http.onreadystatechange = function() {
+            if(this.readyState === 4 && this.status===201){
+                fetchData();
+            }
+        }
     }
     function EditTask(e){
 
@@ -114,16 +120,16 @@ export function ListView({token}){
 
 
 
-    const fetcher = (url, token) =>fetch()
-        .get(url, { headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" } })
-        .then((res) => res.data);
+    // const fetcher = (url, token) =>fetch()
+    //     .get(url, { headers: { "Authorization": "Bearer " + token, "Content-Type": "application/json" } })
+    //     .then((res) => res.data);
 
-    var url = 'http://demo2.z-bit.ee/tasks';
-    const { data, error, mutate } = useSWR([url, token], fetcher)
+    // var url = 'http://demo2.z-bit.ee/tasks';
+    // const { data, error, mutate } = useSWR([url, token], fetcher)
 
-    if (error) console.log("failed to load");
-    if (!data) console.log("loading...");
-    console.log(data)
+    // if (error) console.log("failed to load");
+    // if (!data) console.log("loading...");
+    // console.log(data)
 
 
     return(
