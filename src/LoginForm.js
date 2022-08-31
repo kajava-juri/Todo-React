@@ -22,6 +22,7 @@ export function LoginForm({setUser, setToken}){
     let [registerValues, setregisterValues] = useState(registerInit);
 
     let [createIsDisabled, setcreateIsDisabled] = useState(true);
+    let [error, setError] = useState();
 
     function handleSignup(e){
         e.preventDefault();
@@ -36,6 +37,9 @@ export function LoginForm({setUser, setToken}){
         Http.onreadystatechange = function(){
             if(this.readyState === 4 && this.status===200){
                 console.log(Http.responseText);
+            }
+            if(this.readyState === 4 && this.status===422){
+                setError(Http.responseText);
             }
           
         }
@@ -122,6 +126,7 @@ export function LoginForm({setUser, setToken}){
                 {/* <button type="submit" onClick={() => setUser(true)}>Log in</button> */}
                 <input type="submit" value="Submit" disabled={createIsDisabled}></input>
                 {createIsDisabled && (<p>Disabled</p>)}
+                {error && <p style={{color: "red"}}>{error}</p>}
                 
             </form>
 
